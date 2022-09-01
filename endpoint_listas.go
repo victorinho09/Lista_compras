@@ -18,13 +18,9 @@ func listas(w http.ResponseWriter, peticion *http.Request) {
 		return
 	}
 
-	//debo conseguir el usuario
-	userId := existsCookieDB(cookieValue)
+	//conseguirmos las listas del usuario
 
-	//debo devolver el array de nombres de las listas relacionadas a ese usuario
-	listas := todasListasDeUsuario(userId)
-
-	jsonEncoded, err := json.Marshal(listas)
+	jsonEncoded, err := json.Marshal(todasListasDeUsuario((existsCookieDB((cookieValue)))))
 
 	if err != nil {
 

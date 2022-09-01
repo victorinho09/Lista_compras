@@ -21,7 +21,7 @@
             <button id="boton_setup" type="button" class="btn btn-primary" onclick="marcarHecho()" >Marcar Hecho</button>
             <button id="boton_disparo" type="button" class="btn btn-warning" onclick="reset()" >Reset</button>
             <button id="boton_info" type="button" class="btn btn-primary" onclick="info()">Info</button>
-            <button id="boton_nueva_partida" type="button" class="btn btn-danger ms-4" onclick="nuevaLista()">Nueva Lista</button>
+            <button id="boton_nueva_partida" type="button" class="btn btn-danger ms-4" onclick="nuevaLista()">Añadir nueva lista</button>
 
         </div>
     </div>
@@ -33,6 +33,12 @@
             <input class="form-control" id="contraseña" type="text" name="contraseña"/>
             <br/>
             <button  class="btn btn-success" type="button" onclick="onSubmitAutenticate()"> Submit </button>
+        </div>
+
+        <div class="formulario " id="nuevaLista" style="display: none;">
+            <input class="form-control" id="nombre" type="text" name="nombre"/>
+            <br/>
+            <button  class="btn btn-success" type="button" onclick="onSubmitNewList()"> Submit </button>
         </div>
     </div>
 

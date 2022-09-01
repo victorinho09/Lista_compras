@@ -1,3 +1,7 @@
+let LENGTH_MIN_EMAIL = 5;
+let LENGTH_MIN_CONTRASEÑA = 2;
+let LENGTH_MIN_NOMBRE= 1;
+
 function debug(s) {
     console.log("Debug: " + s);
 }
@@ -22,33 +26,59 @@ function pintaFallo(response) {
 }  
 
 //muestra los nombres de las listas disponibles que hay para consultar
-function pintarListado(){
+function pintarListadoListas(){
 
     var html = ""
 
     //debo conseguir el listado de nombres de listas de la base de datos de mi usuario
-    $.get("/listas").done( (nombres)=>{
+    $.get("/listas").done( (listas)=>{
         html += '<ul class="list-group">';
 
-        nombres.forEach( (nombre)=>{
+
+        listas.forEach( (list)=>{
    
-            html += `<li class="list-group-item">${nombre}</li>`;
+            html += `<li class="list-group-item item" onclick="onShowElements(${list.Nombre},${list.Id})">${list.Nombre}</li>`;
+        } );
+
+        html += '</ul>';
+
+        $(lista).html(html);
+
+    } ).fail(pintaFallo);
+}
+
+function pintarListadoElementos(nombreLista,idLista){
+
+    var html = "";
+
+    var queryArgs = "";
+    queryArgs += "nombre=" + nombreLista;
+    queryArgs += "&id=" + idLista;
+
+    //debo conseguir el listado de nombres de elementos que pertenecen a la lista
+    $.get(`/elementos-lista?${queryArgs}`).done( (elementos)=>{
+        html += '<ul class="list-group">';
+
+        elementos.forEach( (elemento)=>{
+   
+            html += `<li class="list-group-item">${elemento.Nombre}</li>`;
             
         } );
 
         html += '</ul>';
 
-        $(list).html(html);
+        $(lista).html(html);
 
     } ).fail(pintaFallo);
+
 }
 
-function hideFormularioAutenticate(){
+function hideFormulario(id){
 
-    $("#registros").css("display","none");
+    $("#" + id).css("display","none");
 }
-function showFormularioAutenticate(){
-    $("#registros").css("display","block");
+function showFormulario(id){
+    $("#" + id).css("display","block");
 }
 
 function autentificar(){
@@ -57,7 +87,7 @@ function autentificar(){
 
         statusUsuario = status;
         if (statusUsuario == "autenticate"){
-            showFormularioAutenticate();
+            showFormulario("registros");
         } else{
             pintaFallo(status);
         }
@@ -81,48 +111,69 @@ function registro(){
     } );
 }
 
-//cuando se le da al boton submit, se ejecuta esta funcion
-function recogerEmailFormularioRegistro() {
-    var input = $("#email").val();
-    var email = input.trim();
+//le pasas por argumentos el id del input y la longitud para comprobar
+//siempre que sean strings
+function recogerFormularioString(id,length) {
 
-    if ( email.length < 5){
-        //no compruebo la seguridad de la contraseña ni si el email es @
+    input = $("#" + id).val();
+    var inputTrim = input.trim();
+
+    if (inputTrim.length < length ){
         return "";
     }
     //tengo ya los datos como coordenadas en un array
-    return email;
+    return inputTrim;
 }
 
-function recogerContraseñaFormularioRegistro() {
-
-    input = $("#contraseña").val();
-    var contraseña = input.trim();
-
-    if (contraseña.length < 2 ){
-        //no compruebo la seguridad de la contraseña ni si el email es @
-        return "";
-    }
-    //tengo ya los datos como coordenadas en un array
-    return contraseña;
-}
 
 function onSubmitAutenticate(){
 
-    var email = recogerEmailFormularioRegistro()
-    var contraseña = recogerContraseñaFormularioRegistro()
+    var email = recogerFormularioString("email",LENGTH_MIN_EMAIL);
+    var contraseña = recogerFormularioString("contraseña",LENGTH_MIN_EMAIL);
     if (email == "" || contraseña == ""){
-        var resultado = "Error al meter email y contraseña"
-        pintaResultado(resultado)
+        var resultado = "Error al meter email y contraseña";
+        pintaResultado(resultado);
     } else{
-        var queryArgs = ""
-        queryArgs += "email=" + email + "&" + "contraseña=" + contraseña
+        var queryArgs = "";
+        queryArgs += "email=" + email + "&" + "contraseña=" + contraseña;
 
         $.get(`/autenticate?${queryArgs}`).done( (respuestaGet) =>{
             pintaResultado(respuestaGet);
-            hideFormularioAutenticate();
+            hideFormulario("registros");
         }).fail(pintaFallo);
     }
+}
+
+function nuevaLista(){
+
+    showFormulario("nuevaLista");
+}
+
+function onSubmitNewList(){
+
+    var nombre = recogerFormularioString("nombre",LENGTH_MIN_NOMBRE);
+    if (nombre == ""){
+        var resultado = "Error al meter nombre";
+        pintaResultado(resultado);
+    } else{
+        var queryArgs = ""
+        queryArgs += "nombre=" + nombre
+
+        $.get(`/crear-lista?${queryArgs}`).done( (respuestaGet) =>{
+            pintaResultado(respuestaGet);
+            hideFormulario("nuevaLista");
+            pintarListadoListas();
+        }).fail( (respuestaGet)=>{
+            pintaFallo(respuestaGet);
+            pintarListadoListas();
+        } );
+    }
+}
+
+function onShowElements(nombre,listaId){
+
+    debug ("hola que tal");
+    pintarListadoElementos(nombre,listaId);
 }
 
 
@@ -136,5 +187,5 @@ var statusUsuario = "";
 registro().then( () =>{
 
     debug("He llegado hasta el final");
-    pintarListado();
+    pintarListadoListas();
 } );

@@ -21,6 +21,9 @@ func main() {
 	http.HandleFunc("/autenticate",autenticate)
 	http.HandleFunc("/next-step",nextStep)
 	http.HandleFunc("/listas",listas)
+	http.HandleFunc("/crear-lista",crearLista)
+	http.HandleFunc("/elementos-lista",elementosLista)
+
 
 
 	direccion := ":8080" // Como cadena, no como entero; porque representa una dirección
