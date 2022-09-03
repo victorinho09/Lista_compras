@@ -15,13 +15,12 @@
     
 
     <div class="menu-wrapper">
-        <div class="btn-group" role="group">
-            <button id="boton_nextstep" type="button" class="btn btn-primary" onclick="añadir()">Añadir</button>
-            <button id="boton_register" type="button" class="btn btn-primary" onclick="eliminar()" >Eliminar</button>
-            <button id="boton_setup" type="button" class="btn btn-primary" onclick="marcarHecho()" >Marcar Hecho</button>
-            <button id="boton_disparo" type="button" class="btn btn-warning" onclick="reset()" >Reset</button>
-            <button id="boton_info" type="button" class="btn btn-primary" onclick="info()">Info</button>
-            <button id="boton_nueva_partida" type="button" class="btn btn-danger ms-4" onclick="nuevaLista()">Añadir nueva lista</button>
+        <div class="btn-group" role="group" id= "buttons" class="botonNuevaLista">
+            <button id="boton_nueva_lista" type="button" class="btn btn-danger ms-4 " onclick="nuevaLista()">Añadir nueva lista</button>
+
+        </div>
+
+        <div class="btn-group" role="group" id= "buttonsElementos" style="display: none;">
 
         </div>
     </div>
@@ -40,13 +39,19 @@
             <br/>
             <button  class="btn btn-success" type="button" onclick="onSubmitNewList()"> Submit </button>
         </div>
+
+        <div class="formulario " id="nuevoElemento" style="display: none;">
+            <input class="form-control" id="nombreElemento" type="text" name="nombre"/>
+            <br/>
+            <button  class="btn btn-success" type="button" onclick="onSubmitNewElement()"> Submit </button>
+        </div>
+    </div>
+
+    <div id="lista" class="listaTotal">
+
     </div>
 
     <div id="resultado" style="height: 65px;">
-
-    </div>
-
-    <div id="lista">
 
     </div>
     

@@ -1,5 +1,7 @@
 package main
 
+import "database/sql"
+
 type DBList struct {
 	Id        string
 	Nombre    string
@@ -38,6 +40,26 @@ func todasListasDeUsuario(usuarioId string) []DBList {
 	return listas
 }
 
+func findNameList(idLista string) string {
+
+	nombre := ""
+
+	query := DBSprintf("SELECT nombre FROM lista_compra.listas WHERE id='%s'", idLista)
+	fila := MySql.QueryRow(query)
+	err := fila.Scan(&nombre)
+
+	if err == sql.ErrNoRows {
+
+		return ""
+
+	}
+	if err != nil {
+		debugErr("Error de query -> %s", err.Error())
+		return ""
+	}
+	return nombre
+}
+
 func (l *DBList) insert() error {
 
 	//almaceno la estructura DBList en la base de datos
@@ -53,4 +75,36 @@ func (l *DBList) insert() error {
 	}
 
 	return nil
+}
+
+func borrarListaInDBListas(idLista string) error{
+
+	//debo hacer la query para borrar los elementos de la tabla de elementos
+	sql := DBSprintf("DELETE FROM lista_compra.listas WHERE id='%s'", idLista)
+	_, err := MySql.Exec(sql)
+
+	if err != nil {
+		debugErr("Error en delete: %s", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func borrarListaInDB(idLista string) error{
+
+	//primero debo borrar todos los elementos que tengan el idLista
+	err := borrarTodosElementosLista(idLista)
+
+	if err != nil{
+		return err
+	}
+
+	//borro la lista de la lista de listas
+	err = borrarListaInDBListas(idLista)
+	if err != nil{
+		return err
+	}
+
+	return err
 }

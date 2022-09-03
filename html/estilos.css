@@ -2,7 +2,42 @@
     margin: 10px;
 }
 
-.item:hover{
-    background-color: blueviolet;
+.list:hover{
+    background-color:lightblue;
     cursor: pointer;
+}
+
+.element:hover{
+    background-color: lightblue;
+    cursor: pointer;
+}
+
+.botonNuevaLista{
+    display: none;
+}
+
+.botonLista{
+    display: none;
+    margin: 10px;
+}
+
+.botonListaMostrar{
+    display: block;
+    margin: 10px;
+}
+
+.botonElemento{
+    display: none;
+    margin: 10px;
+}
+.listaTotal{
+    margin: 20px;
+}
+.elementoMarcado{
+    background-color: grey !important;
+}
+
+.botonElementoMostrar{
+    display: block;
+    margin: 10px;
 }

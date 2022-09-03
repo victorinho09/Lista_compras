@@ -23,6 +23,8 @@ func main() {
 	http.HandleFunc("/listas",listas)
 	http.HandleFunc("/crear-lista",crearLista)
 	http.HandleFunc("/elementos-lista",elementosLista)
+	http.HandleFunc("/nuevo-elemento",nuevoElemento)
+	http.HandleFunc("/borrar",borrar)
 
 
 

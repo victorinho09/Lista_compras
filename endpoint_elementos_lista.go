@@ -20,18 +20,6 @@ func elementosLista(w http.ResponseWriter, peticion *http.Request) {
 
 	//debo conseguir el usuario
 	userId := existsCookieDB(cookieValue)
-
-	//debo coger por los query args el nombre de la lista
-	nombres, ok := peticion.URL.Query()["nombre"]
-
-	if !ok || len(nombres) != 1 {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("400 - Wrong name!"))
-		return
-	}
-
-	nombre := nombres[0]
-
 	//debo coger por los query args el id de la lista
 	ids, ok := peticion.URL.Query()["id"]
 
@@ -43,11 +31,11 @@ func elementosLista(w http.ResponseWriter, peticion *http.Request) {
 
 	id := ids[0]
 
-	debug("Tengo query args," + nombre + ", " + id)
+	debug("Tengo query args," + id)
 
 	//debo buscar los elementos que pertenecen a la lista en la base de datos
 	//debo conseguir la lista
-	elementos := getElementsFromList(nombre,id,userId)
+	elementos := getElementsFromList(id,userId)
 
 	if elementos == nil{
 		w.WriteHeader(http.StatusBadRequest)

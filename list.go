@@ -18,8 +18,10 @@ func createList(id string, nombre string, usuarioId string) *list {
 	return list
 }
 
-func getElementsFromList(nombreLista string, idLista string, userId string) []DBElement {
+func getElementsFromList(idLista string, userId string) []DBElement {
 
+	//busco el nombre de mi lista
+	nombreLista := findNameList(idLista)
 	//creo mi variable lista
 	list := createList(idLista, nombreLista, userId)
 

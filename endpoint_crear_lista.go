@@ -45,4 +45,8 @@ func crearLista(w http.ResponseWriter, peticion *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("200 - Lista creada!"))
+	return
+
 }
