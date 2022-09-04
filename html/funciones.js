@@ -369,6 +369,7 @@ function añadirElemento(){
     showFormulario("nuevoElemento");
 }
 
+
 //******************** Empieza el script
 
 var statusUsuario = "";
