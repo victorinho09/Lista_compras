@@ -12,8 +12,25 @@
     cursor: pointer;
 }
 
+.elementoMarcado{
+    background-color: grey !important;
+}
+
+.elementoMarcado:hover{
+    background-color: grey;
+    cursor: pointer;
+}
+
+.titulo-header{
+    text-align: center;
+}
+
 .botonNuevaLista{
-    display: none;
+    display: none !important;
+}
+
+.botonNuevaListaMostrar{
+    display: block !important;
 }
 
 .botonLista{
@@ -33,9 +50,7 @@
 .listaTotal{
     margin: 20px;
 }
-.elementoMarcado{
-    background-color: grey !important;
-}
+
 
 .botonElementoMostrar{
     display: block;

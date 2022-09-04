@@ -35,6 +35,7 @@ function pintarListadoListas(){
 
     //debo conseguir el listado de nombres de listas de la base de datos de mi usuario
     $.get("/listas").done( (listas)=>{
+
         html += '<ul class="list-group">';
 
         //reiniciamos el array de status de listas
@@ -56,8 +57,12 @@ function pintarListadoListas(){
 
         html += '</ul>';
 
+        htmlBoton = '<button id="boton_nueva_lista" type="button" class="btn btn-danger ms-4 " onclick="nuevaLista()">Añadir nueva lista</button>'
+
+
         //ponemos los botones relacionados a las listas
-        $(buttons).css("display","block");
+        $(buttons).html(htmlBoton);
+        $(buttons).removeClass("botonNuevaLista").addClass("botonNuevaListaMostrar");
         //escondemos los de los elementos
         $(buttonsElementos).css("display","none");
         $(lista).html(html);
@@ -75,41 +80,47 @@ function pintarListadoElementos(idLista,claseCss){
 
     //debo conseguir el listado de nombres de elementos que pertenecen a la lista
     $.get(`/elementos-lista?${queryArgs}`).done( (elementos)=>{
-        html += '<ul class="list-group">';
 
-        var idDiv = MIN_IDDIV;
-        var idLi = MAX_IDLI;
-        //reiniciamos el array de status de elementos
-        for(i=0;i<statusBotonesElemento.length;i++){
+        if(elementos.length != 0){
+            html += '<ul class="list-group">';
 
-            statusBotonesElemento.pop;
+            var idDiv = MIN_IDDIV;
+            var idLi = MAX_IDLI;
+            //reiniciamos el array de status de elementos
+            for(i=0;i<statusBotonesElemento.length;i++){
+    
+                statusBotonesElemento.pop;
+            }
+    
+            elementos.forEach( (elemento)=>{
+                
+                
+                html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}','li_${idLi}','${claseCss}','${elemento.Nombre}','${ elemento.Id}')">${elemento.Nombre}
+                <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onMarcarElemento('li_${idLi}','div_${idDiv}')"> Marcar Elemento </button>
+                <button type="button" class="btn btn-danger"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
+                </div> </li>`;
+                idDiv = idDiv + 1;
+                idLi = idLi -1;
+                statusBotonesElemento.push('false');
+                
+            } );
+    
+            html += '</ul>';
+            pintaResultado("Mostrando elementos");
+        } else{
+            pintaResultado("No hay elementos en la lista");
         }
 
-        elementos.forEach( (elemento)=>{
-            
-   
-            html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}','li_${idLi}','${claseCss}','${elemento.Nombre}','${ elemento.Id}')">${elemento.Nombre}
-            <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onMarcarElemento('li_${idLi}','div_${idDiv}')"> Marcar Elemento </button>
-            <button type="button" class="btn btn-danger"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
-            </div> </li>`;
-            idDiv = idDiv + 1;
-            idLi = idLi -1;
-            statusBotonesElemento.push('false');
-            
-        } );
         
-        listaActual = elementos[0].ListaId;
-
-        html += '</ul>';
-
         $(lista).html(html);
+        listaActual = idLista;
 
         var botones = "";
         botones += `<button id="boton_añadir_elemento" type="button" class="btn btn-primary" onclick="añadirElemento('${idLista}')"> Añadir Nuevo Elemento</button>`;
         botones += '<button id="boton_disparo" type="button" class="btn btn-warning" onclick="atras()" >Atras</button>';
 
         //escondemos los botones relacionados a las listas
-        $(buttons).css("display","none");
+        $(buttons).removeClass("botonNuevaListaMostrar").addClass("botonNuevaLista");
         $(buttonsElementos).css("display","block");
         $(buttonsElementos).html(botones);
 
@@ -182,7 +193,7 @@ function registro(){
         } ).fail( (respuestaGet)=>{
             pintaFallo(respuestaGet);
             autentificar();
-            resolve(true);
+            resolve(false);
         })
         
     } );
@@ -252,6 +263,7 @@ function onSubmitAutenticate(){
         $.get(`/autenticate?${queryArgs}`).done( (respuestaGet) =>{
             pintaResultado(respuestaGet);
             hideFormulario("registros");
+            pintarListadoListas();
         }).fail(pintaFallo);
     }
 }
@@ -350,8 +362,12 @@ var statusBotonesElemento = [];
 var statusBotonesLista = [];
 
 
-registro().then( () =>{
+registro().then( (resolve) =>{
 
     debug("He llegado hasta el final");
-    pintarListadoListas();
+    if (resolve == false){
+
+    } else{
+        pintarListadoListas();
+    }
 } );
