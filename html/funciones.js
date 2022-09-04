@@ -57,7 +57,7 @@ function pintarListadoListas(){
 
         html += '</ul>';
 
-        htmlBoton = '<button id="boton_nueva_lista" type="button" class="btn btn-danger ms-4 " onclick="nuevaLista()">Añadir nueva lista</button>'
+        htmlBoton = '<button id="boton_nueva_lista" type="button" class="btn btn-primary ms-4 botonGrande " onclick="nuevaLista()">Añadir nueva lista</button>'
 
 
         //ponemos los botones relacionados a las listas
@@ -77,10 +77,19 @@ function pintarListadoElementos(){
     //si elemento marcado => claseCss=elementoMarcado
     //si elemento no marcado => claseCss=element
     var html = "";
-
     var queryArgs = "";
-    queryArgs += "id=" + listaActual;
+
+    
+    queryArgs = "id=" + listaActual;
     var claseCss = "";
+
+    $.get(`/nombre-lista?${queryArgs}`).done( (respuestaGet)=>{
+
+        html += `<div class="lista-header"> Lista: ${respuestaGet} </div>`;
+
+    } ).fail( (respuestaGet)=>{
+        pintaFallo(respuestaGet);
+    } );
 
     //debo conseguir el listado de nombres de elementos que pertenecen a la lista
     $.get(`/elementos-lista?${queryArgs}`).done( (elementos)=>{
@@ -108,7 +117,7 @@ function pintarListadoElementos(){
                 
                 html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}','${elemento.Marcado}')">${elemento.Nombre}
                 <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onMarcarElemento('${elemento.Id}')"> Marcar Elemento </button>
-                <button type="button" class="btn btn-danger"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
+                <button type="button" class="btn btn-primary"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
                 </div> </li>`;
                 idDiv = idDiv + 1;
                 idLi = idLi -1;
@@ -127,8 +136,8 @@ function pintarListadoElementos(){
 
         var botones = "";
         botones += `<button id="boton_añadir_elemento" type="button" class="btn btn-primary" onclick="añadirElemento()"> Añadir Nuevo Elemento</button>`;
+        botones += '<button id="boton_reset" type="button" class="btn btn-primary" onclick="reset()" >Reset Elements</button>';
         botones += '<button id="boton_atras" type="button" class="btn btn-warning" onclick="atras()" >Atras</button>';
-        botones += '<button id="boton_reset" type="button" class="btn btn-danger" onclick="reset()" >Reset Elements</button>';
 
         //escondemos los botones relacionados a las listas
         $(buttons).removeClass("botonNuevaListaMostrar").addClass("botonNuevaLista");
@@ -206,7 +215,7 @@ function autentificar(){
         if (statusUsuario == "autenticate"){
             showFormulario("registros");
         } else{
-            pintaFallo(status);
+            pintaResultado(status);
         }
 
     } ).fail(pintaFallo);
@@ -219,8 +228,8 @@ function registro(){
         $.get("/register").done( (respuestaGet)=>{
             pintaResultado(respuestaGet);
             resolve(true);
-        } ).fail( (respuestaGet)=>{
-            pintaFallo(respuestaGet);
+        } ).fail( ()=>{
+            pintaResultado("Debe iniciar sesion con contraseña y email");
             autentificar();
             resolve(false);
         })
@@ -278,7 +287,7 @@ function onShowOptionsElement(indice,idDiv,marcado){
 function onSubmitAutenticate(){
 
     var email = recogerFormularioString("email",LENGTH_MIN_EMAIL);
-    var contraseña = recogerFormularioString("contraseña",LENGTH_MIN_EMAIL);
+    var contraseña = recogerFormularioString("contraseña",LENGTH_MIN_CONTRASEÑA);
     if (email == "" || contraseña == ""){
         var resultado = "Error al meter email y contraseña";
         pintaResultado(resultado);

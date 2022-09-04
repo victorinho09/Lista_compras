@@ -12,6 +12,7 @@ func DBElementNew() *DBElement {
 	return &DBElement{}
 }
 
+//inserta un elemento en la base de datos
 func (e *DBElement) insert() error {
 	//almaceno la estructura DBElement en la base de datos
 
@@ -28,6 +29,7 @@ func (e *DBElement) insert() error {
 	return nil
 }
 
+//crea un elemento dado su nombre e id
 func createDBElement(nombre string, idLista string) *DBElement {
 
 	elemento := DBElementNew()
@@ -38,6 +40,7 @@ func createDBElement(nombre string, idLista string) *DBElement {
 	return elemento
 }
 
+//encuentra todos los elementos que pertenecen a una lista
 func findElements(l *list) []DBElement {
 
 	elementos := []DBElement{}
@@ -66,6 +69,7 @@ func findElements(l *list) []DBElement {
 	return elementos
 }
 
+//guarda en la base de datos de elementos un elemento
 func saveToDBElement(idLista string, nombre string) error {
 
 	//crear el objeto DBElement
@@ -81,6 +85,7 @@ func saveToDBElement(idLista string, nombre string) error {
 	return nil
 }
 
+//borra un elemento de la base de datos
 func borrarElementoInDB(idElemento string) error {
 
 	debug("elemento" + idElemento)
@@ -97,6 +102,7 @@ func borrarElementoInDB(idElemento string) error {
 
 }
 
+//borra todos los elementos de una lista de la base de datos
 func borrarTodosElementosLista(idLista string) error {
 
 	//debo hacer la query para borrar los elementos de la tabla de elementos
@@ -111,6 +117,7 @@ func borrarTodosElementosLista(idLista string) error {
 	return nil
 }
 
+//actualiza el valor del campo: marcado, de un elemento
 func updateMarcado(idElemento string)error{
 
 	//hacer un update de marcado de elemento
@@ -127,6 +134,7 @@ func updateMarcado(idElemento string)error{
 	return nil
 }
 
+//actualiza el campo: marcado, de todos los elementos a "no"
 func updateResetElementos() error{
 
 	//hacer un update de marcado de elemento

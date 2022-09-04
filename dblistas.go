@@ -12,6 +12,7 @@ func DBListNew() *DBList {
 	return &DBList{}
 }
 
+//todas las listas que tiene un usuario en la base de datos
 func todasListasDeUsuario(usuarioId string) []DBList {
 
 	listas := []DBList{}
@@ -40,6 +41,7 @@ func todasListasDeUsuario(usuarioId string) []DBList {
 	return listas
 }
 
+//encuentra el nombre de una lista en la base de datos dado su id
 func findNameList(idLista string) string {
 
 	nombre := ""
@@ -60,6 +62,7 @@ func findNameList(idLista string) string {
 	return nombre
 }
 
+//inserta una lista en la base de datos
 func (l *DBList) insert() error {
 
 	//almaceno la estructura DBList en la base de datos
@@ -77,7 +80,8 @@ func (l *DBList) insert() error {
 	return nil
 }
 
-func borrarListaInDBListas(idLista string) error{
+//borra todos los elementos que pertenecen a una lista
+func borrarListaInDBListas(idLista string) error {
 
 	//debo hacer la query para borrar los elementos de la tabla de elementos
 	sql := DBSprintf("DELETE FROM lista_compra.listas WHERE id='%s'", idLista)
@@ -91,18 +95,19 @@ func borrarListaInDBListas(idLista string) error{
 	return nil
 }
 
-func borrarListaInDB(idLista string) error{
+//borra una lista completa de la base de datos y sus elementos
+func borrarListaInDB(idLista string) error {
 
 	//primero debo borrar todos los elementos que tengan el idLista
 	err := borrarTodosElementosLista(idLista)
 
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	//borro la lista de la lista de listas
 	err = borrarListaInDBListas(idLista)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 

@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc("/borrar",borrar)
 	http.HandleFunc("/marcar-elemento",marcarElemento)
 	http.HandleFunc("/reset-elementos",resetElementos)
+	http.HandleFunc("/nombre-lista",nombreLista)
 
 
 
