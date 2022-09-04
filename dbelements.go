@@ -110,3 +110,35 @@ func borrarTodosElementosLista(idLista string) error {
 
 	return nil
 }
+
+func updateMarcado(idElemento string)error{
+
+	//hacer un update de marcado de elemento
+
+	sql := DBSprintf("UPDATE lista_compra.elementos SET marcado = '%s' WHERE id = '%s'",
+		"si", idElemento) 
+		_, err := MySql.Exec(sql)
+
+	if err != nil {
+		debugErr("Error en update: %s", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func updateResetElementos() error{
+
+	//hacer un update de marcado de elemento
+
+	sql := DBSprintf("UPDATE lista_compra.elementos SET marcado = '%s' ",
+		"no") 
+	_, err := MySql.Exec(sql)
+
+	if err != nil {
+		debugErr("Error en update: %s", err.Error())
+		return err
+	}
+
+	return nil
+}

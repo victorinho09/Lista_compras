@@ -71,15 +71,20 @@ function pintarListadoListas(){
     } ).fail(pintaFallo);
 }
 
-function pintarListadoElementos(idLista,claseCss){
 
+function pintarListadoElementos(){
+
+    //si elemento marcado => claseCss=elementoMarcado
+    //si elemento no marcado => claseCss=element
     var html = "";
 
     var queryArgs = "";
-    queryArgs += "id=" + idLista;
+    queryArgs += "id=" + listaActual;
+    var claseCss = "";
 
     //debo conseguir el listado de nombres de elementos que pertenecen a la lista
     $.get(`/elementos-lista?${queryArgs}`).done( (elementos)=>{
+
 
         if(elementos.length != 0){
             html += '<ul class="list-group">';
@@ -94,9 +99,15 @@ function pintarListadoElementos(idLista,claseCss){
     
             elementos.forEach( (elemento)=>{
                 
+                if (elemento.Marcado == "si"){
+                    //claseCss => elementoMarcado
+                    claseCss = "elementoMarcado";
+                } else{
+                    claseCss = "element"
+                }
                 
-                html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}','li_${idLi}','${claseCss}','${elemento.Nombre}','${ elemento.Id}')">${elemento.Nombre}
-                <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onMarcarElemento('li_${idLi}','div_${idDiv}')"> Marcar Elemento </button>
+                html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}','${elemento.Marcado}')">${elemento.Nombre}
+                <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onMarcarElemento('${elemento.Id}')"> Marcar Elemento </button>
                 <button type="button" class="btn btn-danger"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
                 </div> </li>`;
                 idDiv = idDiv + 1;
@@ -113,11 +124,11 @@ function pintarListadoElementos(idLista,claseCss){
 
         
         $(lista).html(html);
-        listaActual = idLista;
 
         var botones = "";
-        botones += `<button id="boton_añadir_elemento" type="button" class="btn btn-primary" onclick="añadirElemento('${idLista}')"> Añadir Nuevo Elemento</button>`;
-        botones += '<button id="boton_disparo" type="button" class="btn btn-warning" onclick="atras()" >Atras</button>';
+        botones += `<button id="boton_añadir_elemento" type="button" class="btn btn-primary" onclick="añadirElemento()"> Añadir Nuevo Elemento</button>`;
+        botones += '<button id="boton_atras" type="button" class="btn btn-warning" onclick="atras()" >Atras</button>';
+        botones += '<button id="boton_reset" type="button" class="btn btn-danger" onclick="reset()" >Reset Elements</button>';
 
         //escondemos los botones relacionados a las listas
         $(buttons).removeClass("botonNuevaListaMostrar").addClass("botonNuevaLista");
@@ -128,10 +139,28 @@ function pintarListadoElementos(idLista,claseCss){
 
 }
 
-function onMarcarElemento(idLi,idDiv){
+function reset(){
+    $.get("/reset-elementos").done( (respuestaGet)=>{
+        pintaResultado(respuestaGet);
+        pintarListadoElementos();
+    } ).fail( (respuestaGet)=>{
+        pintaFallo(respuestaGet);
+        pintarListadoElementos();
+    } );
+}
 
-    $("#" + idDiv).removeClass( "botonElementoMostrar" ).addClass( "botonElemento" );
-    $("#" + idLi).removeClass( "element" ).addClass( "elementoMarcado" );
+function onMarcarElemento(idElemento){
+
+   //modificar la base de datos 
+   queryArgs = "";
+   queryArgs= "elemento=" + idElemento;
+   $.get(`/marcar-elemento?${queryArgs}`).done( (respuestaGet)=>{
+        pintaResultado(respuestaGet);
+        pintarListadoElementos();
+    } ).fail( (respuestaGet)=>{
+        pintaFallo(respuestaGet);
+        pintarListadoElementos();
+    } );
 
 }
 
@@ -226,13 +255,13 @@ function onShowOptionsList(indice,idList){
      }
 }
 
-function onShowOptionsElement(indice,idDiv,idLi,clase,nombre,elementoId){
+function onShowOptionsElement(indice,idDiv,marcado){
+
+    if (marcado == "si"){
+        return
+    }
     //mostramos los botones a elegir
     debug("id div:" + idDiv );
-    var idLi = idLi;
-    var clase = clase;
-    var nombre = nombre;
-    var elementoId = elementoId;
     //comprobamos el estado de idDiv
     var estado = statusBotonesElemento[indice];
     if( estado == "true" ){
@@ -243,9 +272,6 @@ function onShowOptionsElement(indice,idDiv,idLi,clase,nombre,elementoId){
         $("#" + idDiv).removeClass( "botonElemento" ).addClass( "botonElementoMostrar" );
         statusBotonesElemento[indice] = 'true';
     }
-    
-
-    
 }
 
 
@@ -308,17 +334,18 @@ function onSubmitNewElement(){
         $.get(`/nuevo-elemento?${queryArgs}`).done( (respuestaGet) =>{
             pintaResultado(respuestaGet);
             hideFormulario("nuevoElemento");
-            pintarListadoElementos(listaActual,"element");
+            pintarListadoElementos();
         }).fail( (respuestaGet)=>{
             pintaFallo(respuestaGet);
-            pintarListadoElementos(listaActual,"element");
+            pintarListadoElementos();
         } );
     }
 }
 
 function onShowElements(listaId){
 
-    pintarListadoElementos(listaId,"element");
+    listaActual = listaId;
+    pintarListadoElementos();
 }
 
 function onEliminateElement(idElemento){
@@ -331,27 +358,16 @@ function onEliminateElement(idElemento){
     //eliminar elemento de la base de datos
     $.get(`/borrar?${queryArgs}`).done( (respuestaGet)=>{
         pintaResultado(respuestaGet);
-        pintarListadoElementos(listaActual,"element");
+        pintarListadoElementos();
     } ).fail( (respuestaGet)=>{
         pintaFallo(respuestaGet);
-        pintarListadoElementos(listaActual,"element");
+        pintarListadoElementos();
     } );
 }
 
-function añadirElemento(idLista){
+function añadirElemento(){
     showFormulario("nuevoElemento");
-    listaActual = idLista;
 }
-
-function eliminarElemento(idLista){
-
-    pintarListadoElementos(idLista,"element");
-    listaActual = idLista;
-
-}
-
-
-
 
 //******************** Empieza el script
 

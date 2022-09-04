@@ -16,10 +16,6 @@
     background-color: grey !important;
 }
 
-.elementoMarcado:hover{
-    background-color: grey;
-    cursor: pointer;
-}
 
 .titulo-header{
     text-align: center;
