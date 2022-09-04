@@ -15,10 +15,15 @@
     background-color: lightblue;
     cursor: pointer;
 }
-
 .elementoMarcado{
     background-color: grey !important;
 }
+
+.elementoMarcado:hover{
+    background-color: grey !important;
+    cursor: pointer;
+}
+
 
 
 .titulo-header{

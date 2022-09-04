@@ -118,12 +118,12 @@ func borrarTodosElementosLista(idLista string) error {
 }
 
 //actualiza el valor del campo: marcado, de un elemento
-func updateMarcado(idElemento string)error{
+func updateMarcado(idElemento string,valor string)error{
 
 	//hacer un update de marcado de elemento
 
 	sql := DBSprintf("UPDATE lista_compra.elementos SET marcado = '%s' WHERE id = '%s'",
-		"si", idElemento) 
+		valor, idElemento) 
 		_, err := MySql.Exec(sql)
 
 	if err != nil {

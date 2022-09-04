@@ -97,6 +97,7 @@ function pintarListadoElementos(){
 
         if(elementos.length != 0){
             html += '<ul class="list-group">';
+           
 
             var idDiv = MIN_IDDIV;
             var idLi = MAX_IDLI;
@@ -109,16 +110,24 @@ function pintarListadoElementos(){
             elementos.forEach( (elemento)=>{
                 
                 if (elemento.Marcado == "si"){
-                    //claseCss => elementoMarcado
-                    claseCss = "elementoMarcado";
+                    //desmarcar 
+                    claseCss = "elementoMarcado"
+                    
+                    html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}')">${elemento.Nombre}
+                    <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onDesmarcarElemento('${elemento.Id}')"> Desmarcar Elemento </button>
+                    <button type="button" class="btn btn-primary"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
+                    </div> </li>`;
+
                 } else{
                     claseCss = "element"
+                    
+                    html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}')">${elemento.Nombre}
+                    <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onMarcarElemento('${elemento.Id}')"> Marcar Elemento </button>
+                    <button type="button" class="btn btn-primary"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
+                    </div> </li>`;
                 }
                 
-                html += `<li id="li_${idLi}" class="list-group-item ${claseCss}" onclick="onShowOptionsElement('${idDiv}','div_${idDiv}','${elemento.Marcado}')">${elemento.Nombre}
-                <div class="botonElemento" id="div_${idDiv}"> <button type="button" class="btn btn-primary"  onclick="onMarcarElemento('${elemento.Id}')"> Marcar Elemento </button>
-                <button type="button" class="btn btn-primary"  onclick="onEliminateElement('${elemento.Id}','div_${idDiv}')"> Eliminar Elemento</button>
-                </div> </li>`;
+                
                 idDiv = idDiv + 1;
                 idLi = idLi -1;
                 statusBotonesElemento.push('false');
@@ -163,6 +172,8 @@ function onMarcarElemento(idElemento){
    //modificar la base de datos 
    queryArgs = "";
    queryArgs= "elemento=" + idElemento;
+   queryArgs+= "&valor=si";
+
    $.get(`/marcar-elemento?${queryArgs}`).done( (respuestaGet)=>{
         pintaResultado(respuestaGet);
         pintarListadoElementos();
@@ -172,6 +183,22 @@ function onMarcarElemento(idElemento){
     } );
 
 }
+
+function onDesmarcarElemento(idElemento){
+
+    //modificar la base de datos 
+    queryArgs = "";
+    queryArgs= "elemento=" + idElemento;
+    queryArgs+= "&valor=no";
+    $.get(`/marcar-elemento?${queryArgs}`).done( (respuestaGet)=>{
+         pintaResultado(respuestaGet);
+         pintarListadoElementos();
+     } ).fail( (respuestaGet)=>{
+         pintaFallo(respuestaGet);
+         pintarListadoElementos();
+     } );
+ 
+ }
 
 function onEliminateList(listId){
 
@@ -205,6 +232,7 @@ function atras(){
     //debe irse desde los elementos de la lista, a mostrar el listado de listas
     pintarListadoListas();
     pintaResultado("Retorno a listas!");
+    hideFormulario("nuevoElemento");
 }
 
 function autentificar(){
@@ -264,11 +292,8 @@ function onShowOptionsList(indice,idList){
      }
 }
 
-function onShowOptionsElement(indice,idDiv,marcado){
+function onShowOptionsElement(indice,idDiv){
 
-    if (marcado == "si"){
-        return
-    }
     //mostramos los botones a elegir
     debug("id div:" + idDiv );
     //comprobamos el estado de idDiv
@@ -355,6 +380,7 @@ function onShowElements(listaId){
 
     listaActual = listaId;
     pintarListadoElementos();
+    hideFormulario("nuevaLista");
 }
 
 function onEliminateElement(idElemento){
